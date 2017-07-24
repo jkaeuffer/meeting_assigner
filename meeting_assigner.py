@@ -16,14 +16,14 @@ class Meeting:
         if ", " in attendee:
             attendee_list = attendee.split(", ")
             self.attendees = [name for name in attendee_list]  
-        if "," in attendee:
+        elif "," in attendee:
             attendee_list = attendee.split(",")
             self.attendees = [name for name in attendee_list]  
-        if "-" in attendee:
+        elif "-" in attendee:
             attendee_list = attendee.split("-")
             self.attendees = [name for name in attendee_list]  
         else:
-            self.attendees = [name for name in attendee_list]  
+            self.attendees.append(attendee)
 
     # Function to remove an attendee, if applicable
     def remove_attendee(self, attendee):
