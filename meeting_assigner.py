@@ -97,9 +97,3 @@ class Meeting:
             leaderboard_new_row.write(str(self.meeting_id) + ", " +
                                       str(self.facilitator) + ", " +
                                       str(self.scribe) + "\n")
-
-test_meeting = Meeting("Test")
-
-test_meeting.add_attendee("Josephine, Shane, Nick")
-
-print test_meeting.attendees
