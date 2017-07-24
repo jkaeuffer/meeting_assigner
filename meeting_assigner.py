@@ -13,7 +13,17 @@ class Meeting:
 
     # Function to add attendees to the meeting
     def add_attendee(self, attendee):
-        self.attendees.append(attendee)
+        if ", " in attendee:
+            attendee_list = attendee.split(", ")
+            self.attendees = [name for name in attendee_list]  
+        if "," in attendee:
+            attendee_list = attendee.split(",")
+            self.attendees = [name for name in attendee_list]  
+        if "-" in attendee:
+            attendee_list = attendee.split("-")
+            self.attendees = [name for name in attendee_list]  
+        else:
+            self.attendees = [name for name in attendee_list]  
 
     # Function to remove an attendee, if applicable
     def remove_attendee(self, attendee):
@@ -87,3 +97,9 @@ class Meeting:
             leaderboard_new_row.write(str(self.meeting_id) + ", " +
                                       str(self.facilitator) + ", " +
                                       str(self.scribe) + "\n")
+
+test_meeting = Meeting("Test")
+
+test_meeting.add_attendee("Josephine, Shane, Nick")
+
+print test_meeting.attendees
