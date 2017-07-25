@@ -18,10 +18,7 @@ class Meeting:
             self.attendees = [name for name in attendee_list]  
         elif "," in attendee:
             attendee_list = attendee.split(",")
-            self.attendees = [name for name in attendee_list]  
-        elif "-" in attendee:
-            attendee_list = attendee.split("-")
-            self.attendees = [name for name in attendee_list]  
+            self.attendees = [name for name in attendee_list]
         else:
             self.attendees.append(attendee)
 
