@@ -1,8 +1,8 @@
 import random
 import os
 
-# Define the path where your leaderboards are saved
-path = # your path, e.g. '/Users/your_name/your_folder'
+# Define the path where your leaderboard directory will be created
+path = 
 class Meeting:
 
     def __init__(self, name):
@@ -12,6 +12,7 @@ class Meeting:
         self.scribe = ""
         self.leaderboard_file = ""
         self.meeting_id = 1
+        self.leaderboard_path = os.path.join(path, 'leaderboards')
 
     def add_attendee(self, attendee):
         self.attendees = [name.strip() for name in attendee.split(",")]  
@@ -25,8 +26,10 @@ class Meeting:
     def create_leaderboard(self, leaderboard):
         # TODO - Check that the leaderboard actually doesn't exist
         # TODO2 - check if .csv is included, otherwise add it
+        if not os.path.exists('leaderboards'):
+            os.makedirs(os.path.join(path, 'leaderboards'))
         self.leaderboard_file = leaderboard + '.csv'
-        with open(os.path.join(path,self.leaderboard_file), 'a') as leaderboard_open:
+        with open(os.path.join(self.leaderboard_path,self.leaderboard_file), 'a') as leaderboard_open:
             leaderboard_open.write('meeting_id, facilitator, scribe' + "\n")
             leaderboard_open.close()
 
@@ -87,5 +90,4 @@ class Meeting:
             leaderboard_new_row.write(str(self.meeting_id) + ", " +
                                       str(self.facilitator) + ", " +
                                       str(self.scribe) + "\n")
-
 
