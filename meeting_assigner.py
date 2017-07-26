@@ -2,7 +2,7 @@ import random
 import os
 
 # Define the path where your leaderboard directory will be created
-path = 
+path = ""
 class Meeting:
 
     def __init__(self, name):
@@ -18,11 +18,12 @@ class Meeting:
         self.attendees = [name.strip() for name in attendee.split(",")]  
 
     def remove_attendee(self, attendee):
-        # FIXME - this will throw an error if there's a typo in attendee name
-        self.attendees.remove(attendee)
+        if attendee in self.attendees:
+            self.attendees.remove(attendee)
+        else:
+            print "I can't find this attendee in the list." \
+            + " Please check spelling"
 
-    # If this is a new recurring meeting, we should create a new leaderboard
-    # so that we can track past facilitators and scribes
     def create_leaderboard(self, leaderboard):
         # TODO - Check that the leaderboard actually doesn't exist
         # TODO2 - check if .csv is included, otherwise add it
@@ -90,4 +91,3 @@ class Meeting:
             leaderboard_new_row.write(str(self.meeting_id) + ", " +
                                       str(self.facilitator) + ", " +
                                       str(self.scribe) + "\n")
-
