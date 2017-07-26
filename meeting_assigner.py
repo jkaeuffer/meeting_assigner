@@ -1,6 +1,8 @@
 import random
+import os
 
-
+# Define the path where your leaderboards are saved
+path = # your path, e.g. '/Users/your_name/your_folder'
 class Meeting:
 
     def __init__(self, name):
@@ -11,50 +13,48 @@ class Meeting:
         self.leaderboard_file = ""
         self.meeting_id = 1
 
-    # Function to add attendees to the meeting
     def add_attendee(self, attendee):
         self.attendees = [name.strip() for name in attendee.split(",")]  
 
-    # Function to remove an attendee, if applicable
     def remove_attendee(self, attendee):
+        # FIXME - this will throw an error if there's a typo in attendee name
         self.attendees.remove(attendee)
 
     # If this is a new recurring meeting, we should create a new leaderboard
     # so that we can track past facilitators and scribes
     def create_leaderboard(self, leaderboard):
+        # TODO - Check that the leaderboard actually doesn't exist
+        # TODO2 - check if .csv is included, otherwise add it
         self.leaderboard_file = leaderboard + '.csv'
-        with open(self.leaderboard_file, 'a') as leaderboard_open:
+        with open(os.path.join(path,self.leaderboard_file), 'a') as leaderboard_open:
             leaderboard_open.write('meeting_id, facilitator, scribe' + "\n")
             leaderboard_open.close()
 
     # If this is a new meeting, just assign the leaderboard file
     # update its meeting id if there's a record
     def assign_leaderboard(self, leaderboard):
+        # TODO - Expect that .csv will be omitted, check if it exists
         self.leaderboard_file = leaderboard
         if len(list(open(self.leaderboard_file, 'r'))) > 1:
             last_meeting_info = list(open(self.leaderboard_file, 'r'))[-1]
             self.meeting_id = int(last_meeting_info[0])+1
 
-    # Main function that will assign scribe and facilitator roles,
-    # First, we check if there was a meeting before for this group,
-    # using the leaderboard
     # if there was a meeting, to be fair, we remove its previous
     # scribe and facilitator from being eligible for this role again
     def assign_roles(self):
         eligible_scribes = self.attendees
         eligible_facilitators = self.attendees
-        # check first if there's a leaderboard
+        # TODO - add message as a default string
         if self.leaderboard_file != "":
-            # ok, cool, there's a leaderboard we can use it
-            # leaderboard_length = len(list(open(self.leaderboard_file, 'r')))
             last_meeting_info = list(open(self.leaderboard_file,
                                           'r'))[-1].strip().split(", ")
             if len(list(open(self.leaderboard_file, 'r'))) > 1:
                 # we need to bump the past facilitator and scribe
                 eligible_facilitators.remove(last_meeting_info[1])
                 eligible_scribes.remove(last_meeting_info[2])
+                # TODO - refactor by only cleaning lists in that if statement.
+                # Make role assignment a common method
 
-                # shuffle the list of eligible scribes and pick the first one
                 random.shuffle(eligible_scribes)
                 self.scribe = eligible_scribes[0]
 
@@ -87,3 +87,5 @@ class Meeting:
             leaderboard_new_row.write(str(self.meeting_id) + ", " +
                                       str(self.facilitator) + ", " +
                                       str(self.scribe) + "\n")
+
+
