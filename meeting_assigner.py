@@ -24,7 +24,7 @@ class Meeting:
             print "I can't find this attendee in the list." \
                 + " Please check spelling"
 
-    def create_record(self, record):
+    def create_or_assign_record(self, record):
         record_file = record
         if not os.path.exists(self.record_path):
             os.makedirs(self.record_path)
@@ -38,17 +38,8 @@ class Meeting:
                 record_open.write('facilitator, scribe' + "\n")
                 record_open.close()
         else:
-            if ".csv" not in record:
-                self.record_file = record + ".csv"
-            else:
-                self.record_file = record
-            print "This record already exists!"
-
-    def assign_record(self, record):
-        if ".csv" not in record:
-            self.record_file = record + ".csv"
-        else:
             self.record_file = record
+            print "This record already exists!"
 
     def assign_roles(self):
         eligible_scribes = self.attendees
@@ -60,12 +51,8 @@ class Meeting:
             eligible_facilitators.remove(last_meeting_info[0])
             eligible_scribes.remove(last_meeting_info[1])
         # assign roles
-        print eligible_scribes
-        print eligible_facilitators
         random.shuffle(eligible_facilitators)
         self.facilitator = eligible_facilitators[0]
-        print self.facilitator
-        print eligible_scribes
         eligible_scribes.remove(self.facilitator)
         random.shuffle(eligible_scribes)
         self.scribe = eligible_scribes[0]
