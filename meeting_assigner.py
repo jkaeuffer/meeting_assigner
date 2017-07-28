@@ -1,6 +1,7 @@
 import random
 import os
 
+
 class Meeting:
 
     def __init__(self, name, path):
@@ -8,43 +9,45 @@ class Meeting:
         self.attendees = list()
         self.facilitator = ""
         self.scribe = ""
-        self.leaderboard_file = ""
+        self.record_file = ""
         self.meeting_id = 1
         self.path = path
-        self.leaderboard_path = os.path.join(self.path, 'leaderboards')
+        self.record_path = os.path.join(self.path, 'records')
 
     def add_attendee(self, attendee):
-        self.attendees = [name.strip() for name in attendee.split(",")]  
+        self.attendees = [name.strip() for name in attendee.split(",")]
 
     def remove_attendee(self, attendee):
         if attendee in self.attendees:
             self.attendees.remove(attendee)
         else:
             print "I can't find this attendee in the list." \
-            + " Please check spelling"
+                + " Please check spelling"
 
-    def create_leaderboard(self, leaderboard):
-        # TODO - Check that the leaderboard actually doesn't exist
-        # TODO2 - check if .csv is included, otherwise add it
-        leaderboard_file = leaderboard
-        if not os.path.exists(self.leaderboard_path):
-            os.makedirs(self.leaderboard_path)
-        if ".csv" not in leaderboard:
-            leaderboard_file = leaderboard + '.csv'
-        if not os.path.exists(os.path.join(self.leaderboard_path, leaderboard_file)):
-            self.leaderboard_file = leaderboard_file
-        with open(os.path.join(self.leaderboard_path,self.leaderboard_file), 'a') as leaderboard_open:
-            leaderboard_open.write('meeting_id, facilitator, scribe' + "\n")
-            leaderboard_open.close()
+    def create_record(self, record):
+        record_file = record
+        if not os.path.exists(self.record_path):
+            os.makedirs(self.record_path)
+        if ".csv" not in record:
+            record_file = record + '.csv'
+        if not os.path.exists(os.path.join(self.record_path,
+                                           record_file)):
+            self.record_file = record_file
+            with open(os.path.join(self.record_path,
+                                   self.record_file), 'a') as record_open:
+                record_open.write('facilitator, scribe' + "\n")
+                record_open.close()
+        else:
+            print "This record already exists!"
 
-    # If this is a new meeting, just assign the leaderboard file
-    # update its meeting id if there's a record
-    def assign_leaderboard(self, leaderboard):
+    def assign_record(self, record):
         # TODO - Expect that .csv will be omitted, check if it exists
-        self.leaderboard_file = leaderboard
-        if len(list(open(self.leaderboard_file, 'r'))) > 1:
-            last_meeting_info = list(open(self.leaderboard_file, 'r'))[-1]
-            self.meeting_id = int(last_meeting_info[0])+1
+        if ".csv" not in record:
+            self.record_file = record + ".csv"
+        else:
+            self.record_file = record
+        if len(list(open(self.record_file, 'r'))) > 1:
+            last_meeting_info = list(open(self.record_file, 'r'))[-1]
 
     # if there was a meeting, to be fair, we remove its previous
     # scribe and facilitator from being eligible for this role again
@@ -52,10 +55,10 @@ class Meeting:
         eligible_scribes = self.attendees
         eligible_facilitators = self.attendees
         # TODO - add message as a default string
-        if self.leaderboard_file != "":
-            last_meeting_info = list(open(self.leaderboard_file,
+        if self.record_file != "":
+            last_meeting_info = list(open(self.record_file,
                                           'r'))[-1].strip().split(", ")
-            if len(list(open(self.leaderboard_file, 'r'))) > 1:
+            if len(list(open(self.record_file, 'r'))) > 1:
                 # we need to bump the past facilitator and scribe
                 eligible_facilitators.remove(last_meeting_info[1])
                 eligible_scribes.remove(last_meeting_info[2])
@@ -88,11 +91,9 @@ class Meeting:
                   + self.scribe + " and the facilitator will be " \
                   + self.facilitator
 
-# If this is a recurring meeting, add to leaderboard
-    def add_to_leaderboard(self):
-        with open(self.leaderboard_file, 'a') as leaderboard_new_row:
-            leaderboard_new_row.write(str(self.meeting_id) + ", " +
-                                      str(self.facilitator) + ", " +
-                                      str(self.scribe) + "\n")
-
-
+# If this is a recurring meeting, add to record
+    def add_to_record(self):
+        with open(self.record_file, 'a') as record_new_row:
+            record_new_row.write(str(self.meeting_id) + ", " +
+                                 str(self.facilitator) + ", " +
+                                 str(self.scribe) + "\n")
