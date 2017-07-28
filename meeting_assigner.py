@@ -30,15 +30,14 @@ class Meeting:
             os.makedirs(self.record_path)
         if ".csv" not in record:
             record_file = record + '.csv'
+        self.record_file = record_file
         if not os.path.exists(os.path.join(self.record_path,
                                            self.record_file)):
-            self.record_file = record_file
             with open(os.path.join(self.record_path,
                                    self.record_file), 'a') as record_open:
                 record_open.write('facilitator, scribe' + "\n")
                 record_open.close()
         else:
-            self.record_file = record
             print "This record already exists!"
 
     def assign_roles(self):
