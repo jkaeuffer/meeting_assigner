@@ -41,20 +41,17 @@ class Meeting:
             print "This record already exists!"
 
     def assign_record(self, record):
-        # TODO - Expect that .csv will be omitted, check if it exists
         if ".csv" not in record:
             self.record_file = record + ".csv"
         else:
             self.record_file = record
-        if len(list(open(self.record_file, 'r'))) > 1:
-            last_meeting_info = list(open(self.record_file, 'r'))[-1]
 
     # if there was a meeting, to be fair, we remove its previous
     # scribe and facilitator from being eligible for this role again
     def assign_roles(self):
         eligible_scribes = self.attendees
         eligible_facilitators = self.attendees
-        # TODO - add message as a default string
+        
         if self.record_file != "":
             last_meeting_info = list(open(self.record_file,
                                           'r'))[-1].strip().split(", ")
@@ -62,34 +59,16 @@ class Meeting:
                 # we need to bump the past facilitator and scribe
                 eligible_facilitators.remove(last_meeting_info[1])
                 eligible_scribes.remove(last_meeting_info[2])
-                # TODO - refactor by only cleaning lists in that if statement.
-                # Make role assignment a common method
-
-                random.shuffle(eligible_scribes)
-                self.scribe = eligible_scribes[0]
-
-                # a scribe cannot be a facilitator,
-                # bump scribe then shuffle facilitators and pick one
-                eligible_facilitators.remove(self.scribe)
-                random.shuffle(eligible_facilitators)
-                self.facilitator = eligible_facilitators[0]
-            else:
-                random.shuffle(eligible_facilitators)
-                self.facilitator = eligible_facilitators[0]
-                eligible_scribes.remove(self.facilitator)
-                random.shuffle(eligible_scribes)
-                self.scribe = eligible_scribes[0]
-            print "The facilitator will be " + self.facilitator + \
+        # assign roles
+        random.shuffle(eligible_facilitators)
+        self.facilitator = eligible_facilitators[0]
+        eligible_scribes.remove(self.facilitator)
+        random.shuffle(eligible_scribes)
+        self.scribe = eligible_scribes[0]
+        message = "The facilitator will be " + self.facilitator + \
                 " and the scribe will be " + self.scribe
-        else:
-            random.shuffle(eligible_facilitators)
-            self.facilitator = eligible_facilitators[0]
-            eligible_scribes.remove(self.facilitator)
-            random.shuffle(eligible_scribes)
-            self.scribe = eligible_scribes[0]
-            print "You're creating an ad hoc meeting, the scribe will be " \
-                  + self.scribe + " and the facilitator will be " \
-                  + self.facilitator
+        print message
+
 
 # If this is a recurring meeting, add to record
     def add_to_record(self):
