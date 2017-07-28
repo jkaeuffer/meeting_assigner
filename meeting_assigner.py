@@ -31,13 +31,17 @@ class Meeting:
         if ".csv" not in record:
             record_file = record + '.csv'
         if not os.path.exists(os.path.join(self.record_path,
-                                           record_file)):
+                                           self.record_file)):
             self.record_file = record_file
             with open(os.path.join(self.record_path,
                                    self.record_file), 'a') as record_open:
                 record_open.write('facilitator, scribe' + "\n")
                 record_open.close()
         else:
+            if ".csv" not in record:
+                self.record_file = record + ".csv"
+            else:
+                self.record_file = record
             print "This record already exists!"
 
     def assign_record(self, record):
@@ -46,33 +50,32 @@ class Meeting:
         else:
             self.record_file = record
 
-    # if there was a meeting, to be fair, we remove its previous
-    # scribe and facilitator from being eligible for this role again
     def assign_roles(self):
         eligible_scribes = self.attendees
         eligible_facilitators = self.attendees
-        
-        if self.record_file != "":
-            last_meeting_info = list(open(self.record_file,
+        if self.record_file != "" and len(
+                list(open(os.path.join(self.record_path,self.record_file), 'r'))) > 1:
+            last_meeting_info = list(open(os.path.join(self.record_path,self.record_file),
                                           'r'))[-1].strip().split(", ")
-            if len(list(open(self.record_file, 'r'))) > 1:
-                # we need to bump the past facilitator and scribe
-                eligible_facilitators.remove(last_meeting_info[1])
-                eligible_scribes.remove(last_meeting_info[2])
+            eligible_facilitators.remove(last_meeting_info[0])
+            eligible_scribes.remove(last_meeting_info[1])
         # assign roles
+        print eligible_scribes
+        print eligible_facilitators
         random.shuffle(eligible_facilitators)
         self.facilitator = eligible_facilitators[0]
+        print self.facilitator
+        print eligible_scribes
         eligible_scribes.remove(self.facilitator)
         random.shuffle(eligible_scribes)
         self.scribe = eligible_scribes[0]
         message = "The facilitator will be " + self.facilitator + \
-                " and the scribe will be " + self.scribe
+            " and the scribe will be " + self.scribe
         print message
 
 
 # If this is a recurring meeting, add to record
     def add_to_record(self):
-        with open(self.record_file, 'a') as record_new_row:
-            record_new_row.write(str(self.meeting_id) + ", " +
-                                 str(self.facilitator) + ", " +
+        with open(os.path.join(self.record_path,self.record_file), 'a') as record_new_row:
+            record_new_row.write(str(self.facilitator) + ", " +
                                  str(self.scribe) + "\n")
