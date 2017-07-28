@@ -1,18 +1,17 @@
 import random
 import os
 
-# Define the path where your leaderboard directory will be created
-path = ""
 class Meeting:
 
-    def __init__(self, name):
+    def __init__(self, name, path):
         self.name = name
         self.attendees = list()
         self.facilitator = ""
         self.scribe = ""
         self.leaderboard_file = ""
         self.meeting_id = 1
-        self.leaderboard_path = os.path.join(path, 'leaderboards')
+        self.path = path
+        self.leaderboard_path = os.path.join(self.path, 'leaderboards')
 
     def add_attendee(self, attendee):
         self.attendees = [name.strip() for name in attendee.split(",")]  
@@ -27,9 +26,13 @@ class Meeting:
     def create_leaderboard(self, leaderboard):
         # TODO - Check that the leaderboard actually doesn't exist
         # TODO2 - check if .csv is included, otherwise add it
-        if not os.path.exists('leaderboards'):
-            os.makedirs(os.path.join(path, 'leaderboards'))
-        self.leaderboard_file = leaderboard + '.csv'
+        leaderboard_file = leaderboard
+        if not os.path.exists(self.leaderboard_path):
+            os.makedirs(self.leaderboard_path)
+        if ".csv" not in leaderboard:
+            leaderboard_file = leaderboard + '.csv'
+        if not os.path.exists(os.path.join(self.leaderboard_path, leaderboard_file)):
+            self.leaderboard_file = leaderboard_file
         with open(os.path.join(self.leaderboard_path,self.leaderboard_file), 'a') as leaderboard_open:
             leaderboard_open.write('meeting_id, facilitator, scribe' + "\n")
             leaderboard_open.close()
@@ -91,3 +94,5 @@ class Meeting:
             leaderboard_new_row.write(str(self.meeting_id) + ", " +
                                       str(self.facilitator) + ", " +
                                       str(self.scribe) + "\n")
+
+
