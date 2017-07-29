@@ -40,19 +40,21 @@ class Meeting:
         else:
             print "This record already exists!"
 
+# FIX ME I'M BROKEN
     def assign_roles(self):
-        eligible_scribes = self.attendees
-        eligible_facilitators = self.attendees
         if self.record_file != "" and len(
                 list(open(os.path.join(self.record_path,self.record_file), 'r'))) > 1:
             last_meeting_info = list(open(os.path.join(self.record_path,self.record_file),
                                           'r'))[-1].strip().split(", ")
-            eligible_facilitators.remove(last_meeting_info[0])
-            eligible_scribes.remove(last_meeting_info[1])
+            eligible_facilitators = [name for name in self.attendees if name.lower() != last_meeting_info[0].lower()]
+            eligible_scribes = [name for name in self.attendees if name.lower() != last_meeting_info[1].lower()]
+        else:
+            eligible_scribes = self.attendees
+            eligible_facilitators = self.attendees
         # assign roles
         random.shuffle(eligible_facilitators)
         self.facilitator = eligible_facilitators[0]
-        eligible_scribes.remove(self.facilitator)
+        eligible_scribes = [name for name in eligible_scribes if name != self.facilitator]
         random.shuffle(eligible_scribes)
         self.scribe = eligible_scribes[0]
         message = "The facilitator will be " + self.facilitator + \
